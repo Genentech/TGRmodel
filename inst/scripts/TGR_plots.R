@@ -9,7 +9,7 @@ GR_para = data.frame(GR_inf = -0.5, GEC50 = 0.3, h_GR = 1.5)
 Schedule = "QD"
 Duration = 21
 
-Doses = c(0.1, 0.2, 0.5, 1, 2, 5, 10, 20)
+Doses = c(0.2, .5, 2, 5, 15)
 TGR_predicted = array(NA, length(Doses), dimnames = list(Doses))
 dose_plots = list()
 
@@ -26,20 +26,24 @@ for (id in seq_along(Doses)) {
   growth_unt_plot = data.frame(Time = df_conc$Time, rel_vol = 2^(k0*df_conc$Time))
   
   dose_plots[[id]] = ggplot(mapping = aes(x = Time)) +
-    geom_line(data = df_conc, mapping = aes(y = Conc), color = 'cyan', size = .5) +
+    geom_line(data = df_conc, mapping = aes(y = Conc/5), color = 'cyan', size = .5) +
     geom_line(growth_unt_plot, mapping = aes(y = rel_vol), color = "red", size = 1) +
     geom_line(growth_plot, mapping = aes(y = rel_vol), color = "black", size = 1) +
     labs(x = "Time (days)", y = "Relative Volume") +
     ggtitle(sprintf('Dose = %.1f mg/kg, TGR = %.2f',  Doses[id], TGR_predicted[id])) +
     theme_bw() + 
-    coord_cartesian(ylim = c(-0.5,5))
-
+    scale_y_continuous("Relative tumor volume", sec.axis = sec_axis(~ . *5, name = "Serum Concentration [µM]")) +
+    coord_cartesian(ylim = c(0,4))
 }
 
 grid.arrange(grobs = c(dose_plots, list(
   ggplot(data.frame(Dose = Doses, TGR = TGR_predicted),aes(Dose, TGR)) +
+    geom_hline(yintercept = 1, alpha = .5) +
+    geom_hline(yintercept = 0, alpha = .5) +
     geom_point() +
     scale_x_log10() +
+    coord_cartesian(ylim = c(-1, 1)) +
+    labs(x = "Dose (mg/kg)", y = "TGR") +
     theme_bw() +
     ggtitle('TGR Dose-response curve')
 )))
