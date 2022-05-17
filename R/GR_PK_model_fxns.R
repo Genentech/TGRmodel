@@ -21,6 +21,8 @@
 #'
 #' @return data.frame with \code{Time} (in days) and \code{Conc} serum concentration (in µM)
 #' 
+#' @importFrom gsignal pulstran
+#' 
 #' @export
 #' 
 
@@ -60,7 +62,7 @@ PK_to_conc_profile = function(PK_para, Dose, Schedule, Duration, Dose_uM_0 = 0) 
   pp <- conc(tp)
   d <- seq(0,Duration,T)
   
-  serum_conc <- function(t) pulstran(t,d,pp,1/.integration_step())
+  serum_conc <- function(t) gsignal::pulstran(t,d,pp,1/.integration_step())
   return(list(Time = tp, Conc = serum_conc))
 }
 
