@@ -5,7 +5,7 @@
 \title{GR_inVitro_integration
 Calculate relative tumor growth inhibition (TGR) based on conc_profile}
 \usage{
-GR_inVitro_integration(conc_profile, GR_para, int_method = "cont_int")
+GR_inVitro_integration(conc_profile, GR_para, int_method = "mean")
 }
 \arguments{
 \item{conc_profile}{data.frame with \code{Time} (in days) and relative growth rate \code{k} over time
@@ -35,5 +35,5 @@ Duration = 21
 Dose = 5
 conc_profile = PK_to_conc_profile(PK_para, Dose, Schedule, Duration)
 relk_1 = relk_over_time(GR_para, conc_profile)
-GR_predicted = GR_inVitro_integration(conc_profile, GR_para, int_method = 'cont_int')
+GR_predicted = GR_inVitro_integration(conc_profile, GR_para)
 }

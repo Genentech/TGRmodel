@@ -67,7 +67,7 @@ PK_to_conc_profile = function(PK_para, Dose, Schedule, Duration, Dose_uM_0 = 0) 
 
 #' expanding GR function for rate based on concentration
 relk_fct = function(c,GR_para) {
-  GR_c = logistic_4parameters(c, GR_para$GR_inf, 1, GR_para$GEC50, GR_para$h_GR)
+  GR_c = logistic_4parameters(pmax(0,c), GR_para$GR_inf, 1, GR_para$GEC50, GR_para$h_GR)
   return ( log2(GR_c + 1) )
 }
 
@@ -134,14 +134,14 @@ relk_over_time = function(GR_para, conc_profile) {
 #' Dose = 5
 #' conc_profile = PK_to_conc_profile(PK_para, Dose, Schedule, Duration)
 #' relk_1 = relk_over_time(GR_para, conc_profile)
-#' GR_predicted = GR_inVitro_integration(conc_profile, GR_para, int_method = 'cont_int')
+#' GR_predicted = GR_inVitro_integration(conc_profile, GR_para)
 
-GR_inVitro_integration = function(conc_profile, GR_para, int_method = 'cont_int') {
+GR_inVitro_integration = function(conc_profile, GR_para, int_method = 'mean') {
   
   Duration = max(conc_profile$Time)
   # integration based on different methods (parameter  int_method  )
   if (int_method == 'mean' ) {
-    k_inhibition = relk_over_time(GR_para, conc_profile$Conc(conc_profile$Time))
+    k_inhibition = relk_over_time(GR_para, conc_profile)
     k_mean = mean( k_inhibition$relk[ k_inhibition$Time >= (Duration-2)*T &
                                         k_inhibition$Time < (Duration-1)*T ])
     
@@ -162,7 +162,7 @@ GR_inVitro_integration = function(conc_profile, GR_para, int_method = 'cont_int'
     int_val = stats::integrate(integrand,
                         lower = (Duration-2)*T,
                         upper = (Duration-1)*T,
-                        subdivisions=T/.integration_step())
+                        subdivisions=20*T/.integration_step())
     k_mean = int_val$value/T
   }
   
@@ -173,5 +173,5 @@ GR_inVitro_integration = function(conc_profile, GR_para, int_method = 'cont_int'
 
 #' step for the numerical integration
 .integration_step = function() {
-  return( 0.001 )
+  return( 0.0005 )
 }
