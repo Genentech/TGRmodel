@@ -18,6 +18,6 @@ data.frame with\code{Time} (in days) and relative growth rate \code{k} over time
 }
 \description{
 Calculate the serum concentration profile based on the drug PK, dose, and schedule.
-The concentration (in µM) is calculated based on one-compartment PK model with parameters k_a and k_e 
+The concentration (in µM) is calculated based on one-compartment PK model with parameters k_a and k_e
 provided in the input variable PK_para.
 }

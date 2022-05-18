@@ -10,11 +10,11 @@ PK_to_conc_profile(PK_para, Dose, Schedule, Duration, Dose_uM_0 = 0)
 \arguments{
 \item{PK_para}{numeric array for the PK properties of the drug (required fields: MW, VF, k_a, k_e)
 \itemize{
-  \item{'MW' molecular weight in g/mol}
-  \item{'VF' distribution volume in L/kg}
-  \item{'k_a' absoption rate in 1/h}
-  \item{'k_e' elimination rate in 1/h}
-  }}
+\item{'MW' molecular weight in g/mol}
+\item{'VF' distribution volume in L/kg}
+\item{'k_a' absoption rate in 1/h}
+\item{'k_e' elimination rate in 1/h}
+}}
 
 \item{Dose}{numeric values for the dose of the drug given in mg/kg}
 
@@ -27,10 +27,10 @@ Defaults to \code{0}.}
 }
 \value{
 list with \code{Time} (in days) and \code{Conc} serum concentration (in µM)
-    and \code{dose_period} for the dosing schedule
+and \code{dose_period} for the dosing schedule
 }
 \description{
 Calculate the serum concentration profile based on the drug PK, dose, and schedule.
-The concentration (in µM) is calculated based on one-compartment PK model with parameters k_a and k_e 
+The concentration (in µM) is calculated based on one-compartment PK model with parameters k_a and k_e
 provided in the input variable PK_para.
 }

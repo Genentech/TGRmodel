@@ -1,69 +1,17 @@
-library(drc)
-library(reshape2)
 
 #' Actual fitting function
 #'
-#' \code{ICGRfits} returns fit parameters
+#' \code{logisticFit} returns fit parameters for an IC or GR curve
 #'
 #' returns fit parameters
 #'
-#' @import reshape2
-#' @param log10concs concentrations
-#' @param RelativeViability values
-#' @param GRvalues values
-#' @param e_0 = 1 by default
-#' @param GR_0 = 1 by default
-#' @param force use signifcance or not
-#' @param cap enforce e_0 and GR_0
-#' @return vector of parameters
-#' @examples
-#' sum(1:10)
-#' @importFrom drc drm drmc LL.3u
-#' @export
-ICGRfits <- function(df_,
-                     e_0 = 1,
-                     GR_0 = 1,
-                     force = FALSE) {
-  df_metrics <- rbind(
-    logisticFit(
-      df_$Concentration,
-      df_$RelativeViability,
-      x_0 = e_0,
-      curve_type = "IC",
-      force = force
-    ),
-    logisticFit(
-      df_$Concentration,
-      df_$GRvalue,
-      x_0 = GR_0,
-      curve_type = "GR",
-      force = force
-    )
-  )
-  rownames(df_metrics) <- c("IC", "GR")
-
-  return(df_metrics)
-}
-
-
-
-
-#' Actual fitting function
-#'
-#' \code{logisticFit} returns fit parameters
-#'
-#' returns fit parameters
-#'
-#' @import reshape2
-#' @param log10concs log10 of concentrations
-#' @param normValues values
-#' @param x_0 upper limit; =1 by default )
+#' @param concs concentration values
+#' @param normValues normalized response values
+#' @param x_0 upper limit; (=1 by default)
 #' @param curve_type response curve: either IC ([0,1]) or GR([-1,1])
-#' @param force use signifcance or not
-#' @param cap enforce x_0
+#' @param force force a sigmoidal fit even if the fit is not significantly better than a flat fit
+#' @param cap cap values at (x_0 + cap)
 #' @return vector of parameters
-#' @examples
-#' sum(1:10)
 #' @importFrom drc drm drmc LL.3u
 #' @export
 logisticFit <-
@@ -73,13 +21,11 @@ logisticFit <-
            curve_type = c("IC", "GR"),
            force = FALSE,
            cap = 0.1) {
-    # Implementation of the genedata approach for curve fit: https://screener.genedata.com/documentation/display/DOC15/Business+Rules+for+Dose-Response+Curve+Fitting+Model+Selection+and+Fit+Validity
-    #
-
+    
     # define variables and prepare data
     log10concs <- log10(concs)
     df_ <- data.frame(log10conc = log10concs,
-                     normValues = pmin(normValues, normValues + cap))
+                     normValues = pmin(normValues, x_0 + cap))
 
     fit_para <- c("h", "x_inf", "c50")
 
@@ -183,118 +129,19 @@ logisticFit <-
 
 
 
-# logistic function (not used in the file but useful for plotting externally)
+#' logistic function for fitting drug-dose response curve
+#'
+#' \code{logistic_4parameters} returns values based on concentration and fit parameters
+#'
+#' returns values based on concentration and fit parameters
+#' 
+#' @param c concentration (can be an array)
+#' @param Vinf asymptotic value at high concentration
+#' @param V0 asymptotic value at low concentration
+#' @param EC50 mid-point of the curve
+#' @param h Hill coefficient
+#' @return array of response values
 #' @export
 logistic_4parameters <- function(c, Vinf, V0, EC50, h) {
   Vinf + (V0 - Vinf) / (1 + (c / EC50) ^ h)
-}
-
-# this is just for handling some header name
-get_header <- function(x = NULL) {
-  headersList <- list(
-    manifest = c("Barcode", "Template", get_identifier("duration")),
-    raw_data = c(
-      "ReadoutValue",
-      "BackgroundValue",
-      "UntrtReadout",
-      "Day0Readout"
-    ),
-    normalized_results = c(
-      "CorrectedReadout",
-      "GRvalue",
-      "RelativeViability",
-      "DivisionTime",
-      "RefGRvalue",
-      "RefRelativeViability"
-    ),
-    averaged_results = c("std_GRvalue", "std_RelativeViability"),
-    response_metrics = c(
-      "x_mean",
-      "x_AOC",
-      "xc50",
-      "x_max",
-      "c50",
-      "x_inf",
-      "x_0",
-      "h",
-      "r2",
-      "flat_fit"
-    ),
-    add_clid = c("CellLineName", "Tissue", "ReferenceDivisionTime")
-    # corresponds to the fieLd  "celllinename", "primarytissue", "doublingtime" from gneDB CLIDs
-  )
-  headersList[["IC_metrics"]] <-
-    array(
-      c(
-        "mean_viability",
-        "ic_AOC",
-        "ic50",
-        "e_max",
-        "ec50",
-        "e_inf",
-        "e_0",
-        "h_ic",
-        "ic_r2",
-        "flat_fit_ic"
-      ),
-      dimnames = headersList["response_metrics"]
-    )
-  headersList[["GR_metrics"]] <-
-    array(
-      c(
-        "mean_GR",
-        "GR_AOC",
-        "GR50",
-        "GR_max",
-        "GEC50",
-        "GR_inf",
-        "GR_0",
-        "h_GR",
-        "GR_r2",
-        "flat_fit_GR"
-      ),
-      dimnames = headersList["response_metrics"]
-    )
-  headersList[["metrics_results"]] <-
-    c("maxlog10Concentration",
-      "N_conc",
-      headersList[["response_metrics"]],
-      headersList[["IC_metrics"]],
-      headersList[["GR_metrics"]])
-  headersList[["controlled"]] <- c(
-    get_identifier("cellline"),
-    headersList[["manifest"]],
-    get_identifier("drug"),
-    "Concentration",
-    paste0(get_identifier("drug"), "_", 2:10),
-    paste0("Concentration_", 2:10)
-  )
-  if (!is.null(x) &&
-      x %in% names(headersList))
-      return(headersList[[x]])
-  else
-      return(headersList)
-}
-
-# this is just for handling some header name
-get_identifier <- function(x = NULL) {
-  identifiersList <- list(
-    duration = "Duration",
-
-    cellline = "clid",
-
-    drug = "Gnumber",
-    drugname = "DrugName",
-    # corresponds to the fieLd  'gcsi_drug_name' from gCellGenomics::getDrugs()
-
-    untreated_tag = c("untreated", "vehicle"),
-    # flag to identify control treatments
-
-    WellPosition = c("WellRow", "WellColumn")
-  )
-  if (!is.null(x) &&
-      x %in% names(identifiersList))
-    return(identifiersList[[x]])
-  else
-    return(identifiersList)
 }

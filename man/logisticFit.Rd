@@ -14,27 +14,24 @@ logisticFit(
 )
 }
 \arguments{
-\item{normValues}{values}
+\item{concs}{concentration values}
 
-\item{x_0}{upper limit; =1 by default )}
+\item{normValues}{normalized response values}
 
-\item{curve_type}{response curve: either IC ([0,1]) or GR([-1,1])}
+\item{x_0}{upper limit; (=1 by default)}
 
-\item{force}{use signifcance or not}
+\item{curve_type}{response curve: either IC (\link{0,1}) or GR(\link{-1,1})}
 
-\item{cap}{enforce x_0}
+\item{force}{force a sigmoidal fit even if the fit is not significantly better than a flat fit}
 
-\item{log10concs}{log10 of concentrations}
+\item{cap}{cap values at (x_0 + cap)}
 }
 \value{
 vector of parameters
 }
 \description{
-\code{logisticFit} returns fit parameters
+\code{logisticFit} returns fit parameters for an IC or GR curve
 }
 \details{
 returns fit parameters
-}
-\examples{
-sum(1:10)
 }
