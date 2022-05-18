@@ -3,8 +3,8 @@ library(ggrepel)
 library(gridExtra)
 library(TGRmodel)
 
-PK_para = data.frame(k_a = 2, k_e = 0.15, MW = 450, VF = 1)
-GR_para = data.frame(GR_inf = -0.5, GEC50 = 0.5, h_GR = 2)
+PK_para = data.frame(k_a = 2, k_e = 0.2, MW = 450, VF = 1)
+GR_para = data.frame(GR_inf = -0.6, GEC50 = 0.4, h_GR = 2)
 Schedule = "QD"
 Duration_1 = 7 #days
 Duration_2 = 14 #days
@@ -30,7 +30,7 @@ df_conc = rbind(conc_1, conc_2)
 relk_avg = mean(relk_fct(df_conc$Conc, GR_para))
 TGR_eff = (2^relk_avg)-1
 
-k0 = 1/14
+k0 = 1/12
 growth_untreat = 2^(k0*df_conc$Time)
 growth_1 = 2^(k0*mean(relk_1$relk)*relk_1$Time)
 growth_2 = growth_1[[length(growth_1)]]*2^(k0*mean(relk_2$relk)*relk_2$Time[-1])
@@ -45,12 +45,12 @@ final_plot = ggplot(mapping = aes(x = Time)) +
   labs(x = "Time (days)", y = "log2 Relative Volume") +
   theme_bw() + 
   scale_y_continuous("Relative tumor volume", sec.axis = sec_axis(~ . *10, name = "Serum Concentration [µM]")) +
-  coord_cartesian(ylim = c(0,3.5)) +
-  annotate('text', x = Duration_1+Duration_2, y = growth_plot$rel_vol[nrow(growth_plot)] + .05, hjust = 1, label = sprintf('TGR = %.2f', TGR_eff)) + 
-  annotate('rect', xmin = 0, xmax = Duration_1, ymin = 0, ymax = -.07, size = 5, fill = 'blue', alpha = .2) +
-  annotate('rect', xmin = Duration_1, xmax = Duration_1+Duration_2, ymin = 0, ymax = -.07, size = 5, fill = 'green', alpha = .2) +
-  annotate('text', x = Duration_1/2, y = -.01, hjust = .5, vjust = 1, label = sprintf('%.1f mg/kg', Dose_1)) +
-  annotate('text', x = Duration_1 + Duration_2/2, y = -.01, hjust = .5, vjust = 1, label = sprintf('%.1f mg/kg', Dose_2))
+  coord_cartesian(ylim = c(-.1,3.5)) +
+  annotate('text', x = Duration_1+Duration_2, y = growth_plot$rel_vol[nrow(growth_plot)] + .05, vjust = 0, hjust = 1, label = sprintf('TGR = %.2f', TGR_eff)) + 
+  annotate('rect', xmin = 0, xmax = Duration_1, ymin = 0, ymax = -.05, size = 5, fill = 'blue', alpha = .2) +
+  annotate('rect', xmin = Duration_1, xmax = Duration_1+Duration_2, ymin = 0, ymax = -.05, size = 5, fill = 'green', alpha = .2) +
+  annotate('text', x = Duration_1/2, y = -.06, hjust = .5, vjust = 1, label = sprintf('%.1f mg/kg', Dose_1)) +
+  annotate('text', x = Duration_1 + Duration_2/2, y = -.06, hjust = .5, vjust = 1, label = sprintf('%.1f mg/kg', Dose_2))
   #theme(text = element_text(family = "sans"), axis.title.x = element_text(size = rel(3)), axis.title.y = element_text(size = rel(3)), axis.text.x=element_text(size=rel(3)), axis.text.y=element_text(size=rel(3)), plot.title = element_text(hjust = 0.5), legend.title = element_text(color = 'black'))
 
 print(final_plot)

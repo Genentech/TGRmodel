@@ -19,7 +19,8 @@
 #' @param Dose_uM_0 numeric value for the initial serum concentration (in µM)
 #'  Defaults to \code{0}.
 #'
-#' @return data.frame with \code{Time} (in days) and \code{Conc} serum concentration (in µM)
+#' @return list with \code{Time} (in days) and \code{Conc} serum concentration (in µM)
+#'     and \code{dose_period} for the dosing schedule
 #' 
 #' @importFrom gsignal pulstran
 #' 
@@ -27,20 +28,16 @@
 #' 
 
 PK_to_conc_profile = function(PK_para, Dose, Schedule, Duration, Dose_uM_0 = 0) {
-  # Calculate the PK serum profile based on the drug, dose, and schedule
-  #PK_para are the properties of the drug kept in a file
-  #Dose is the drug conc. given for each in vivo trial
-  #Schedule is the frequency of injections supplied
-  #Duration is the last day of the trial
+  
   Dose_uM = Dose*1000/PK_para$MW/PK_para$VF
   if (Schedule == "QD"){
-    T <- 1
+    dose_period <- 1
   } else if (Schedule == "BID"){
-    T <- 0.5
+    dose_period <- 0.5
   } else if (Schedule == "EOD"){
-    T <- 2
+    dose_period <- 2
   } else if (Schedule == "Q3D"){
-    T <- 3
+    dose_period <- 3
   }
   # do the integration based on a 1 compartment PK model
   k_a <- PK_para$k_a #check if given in hr^-1
@@ -55,15 +52,15 @@ PK_to_conc_profile = function(PK_para, Dose, Schedule, Duration, Dose_uM_0 = 0) 
   initvec <- matrix(c(Dose_uM, Dose_uM_0), 2, 1, byrow=TRUE)
   consts <- solve(eigvec,initvec)
   
-  #create pulsetrain of multiple doses given ever T days
+  #create pulsetrain of multiple doses given ever dose_period days
   
   conc <- function(t) (consts[1]*eigvec[2,1]*exp(eigval[1]*(t)) + consts[2]*eigvec[2,2]*exp(eigval[2]*(t)))
   tp <- seq(0,Duration,.integration_step())
   pp <- conc(tp)
-  d <- seq(0,Duration,T)
+  d <- seq(0,Duration,dose_period)
   
   serum_conc <- function(t) gsignal::pulstran(t,d,pp,1/.integration_step())
-  return(list(Time = tp, Conc = serum_conc))
+  return(list(Time = tp, Conc = serum_conc, dose_period = dose_period))
 }
 
 
@@ -81,8 +78,7 @@ relk_fct = function(c,GR_para) {
 #' The concentration (in µM) is calculated based on one-compartment PK model with parameters k_a and k_e 
 #' provided in the input variable PK_para. 
 #'
-#' @param GR_para  numeric array for the in vitro GR parameters of the drug (required fields: GR_inf, GEC50, h_GR)
-#' Can calculate the average of multiple parameters at the same time given multiple rows in \code{GR_para}
+#' @param GR_para  numeric array for the in vitro GR parameters of the drug (required fields: \code{GR_inf}, \code{GEC50}, \code{h_GR})
 #' @param conc_profile  data.frame with \code{Time} (in days) and \code{Conc} (serum concentration in µM)
 #' can be the output of PK_to_conc_profile
 #'
@@ -92,18 +88,9 @@ relk_fct = function(c,GR_para) {
 #' 
 
 relk_over_time = function(GR_para, conc_profile) {
-  k_inhibition = data.frame(Time = conc_profile$Time, relk = 0)
-  
-  if (nrow(GR_para)>1) {
-    temp_relk = matrix(0, nrow(conc_profile), nrow(GR_para))
-    for (i in 1:nrow(GR_para)) {
-      temp_relk[,i] = relk_fct(conc_profile$Conc(conc_profile$Time), GR_para[i,])
-    }
-    k_inhibition$relk = rowMeans(temp_relk)
-  } else {
-    k_inhibition$relk = relk_fct(conc_profile$Conc(conc_profile$Time), GR_para)
-  }
-  
+  k_inhibition = data.frame(Time = conc_profile$Time, 
+                            relk = relk_fct(conc_profile$Conc(conc_profile$Time), GR_para)
+  )
   return(k_inhibition)
 }
 
@@ -141,31 +128,22 @@ relk_over_time = function(GR_para, conc_profile) {
 GR_inVitro_integration = function(conc_profile, GR_para, int_method = 'mean') {
   
   Duration = max(conc_profile$Time)
+  dose_period = conc_profile$dose_period
   # integration based on different methods (parameter  int_method  )
   if (int_method == 'mean' ) {
     k_inhibition = relk_over_time(GR_para, conc_profile)
-    k_mean = mean( k_inhibition$relk[ k_inhibition$Time >= (Duration-2)*T &
-                                        k_inhibition$Time < (Duration-1)*T ])
+    k_mean = mean( k_inhibition$relk[ k_inhibition$Time >= (Duration-2)*dose_period &
+                                        k_inhibition$Time < (Duration-1)*dose_period ])
     
   } else if (int_method == 'cont_int' ) {
-    integrand = function(x) {
+    integrand = function(x)  relk_fct(conc_profile$Conc(x), GR_para)
       # integration should be over time --> convert in c then in GR then in relk
-      if (nrow(GR_para)>1) {
-        GR_c = matrix(0, length(x), nrow(GR_para))
-        for (i in 1:nrow(GR_para)) {
-          GR_c[,i] = relk_fct(conc_profile$Conc(x), GR_para[i,])
-        }
-        return(log2( rowMeans((2**GR_c) - 1) + 1))
-      } else {
-        GR_c = relk_fct(conc_profile$Conc(x), GR_para)
-        return ( log2(GR_c + 1) )
-      }
-    }
+    
     int_val = stats::integrate(integrand,
-                        lower = (Duration-2)*T,
-                        upper = (Duration-1)*T,
-                        subdivisions=20*T/.integration_step())
-    k_mean = int_val$value/T
+                        lower = (Duration-2)*dose_period,
+                        upper = (Duration-1)*dose_period,
+                        subdivisions=20*dose_period/.integration_step())
+    k_mean = int_val$value/dose_period
   }
   
   # returns a single GR value for the integration over the Duration of the experiment

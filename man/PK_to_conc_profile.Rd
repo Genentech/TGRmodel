@@ -26,7 +26,8 @@ PK_to_conc_profile(PK_para, Dose, Schedule, Duration, Dose_uM_0 = 0)
 Defaults to \code{0}.}
 }
 \value{
-data.frame with \code{Time} (in days) and \code{Conc} serum concentration (in µM)
+list with \code{Time} (in days) and \code{Conc} serum concentration (in µM)
+    and \code{dose_period} for the dosing schedule
 }
 \description{
 Calculate the serum concentration profile based on the drug PK, dose, and schedule.

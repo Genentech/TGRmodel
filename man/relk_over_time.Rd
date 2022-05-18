@@ -8,8 +8,7 @@ Calculate the serum concentration profile based on the drug PK, dose, and schedu
 relk_over_time(GR_para, conc_profile)
 }
 \arguments{
-\item{GR_para}{numeric array for the in vitro GR parameters of the drug (required fields: GR_inf, GEC50, h_GR)
-Can calculate the average of multiple parameters at the same time given multiple rows in \code{GR_para}}
+\item{GR_para}{numeric array for the in vitro GR parameters of the drug (required fields: \code{GR_inf}, \code{GEC50}, \code{h_GR})}
 
 \item{conc_profile}{data.frame with \code{Time} (in days) and \code{Conc} (serum concentration in µM)
 can be the output of PK_to_conc_profile}

@@ -7,6 +7,6 @@ Authors@R:
 Description: 
     Functions to predict Tumor Growth Rate inhibition using in vitro data. 
     Supporting the manuscript "Growth-rate model predicts in vivo tumor response from in vitro data"
-License: use_mit_license()
+License: MIT + file LICENSE
 Encoding: UTF-8
 RoxygenNote: 7.2.0
