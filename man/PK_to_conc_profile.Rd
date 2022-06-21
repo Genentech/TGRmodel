@@ -2,15 +2,14 @@
 % Please edit documentation in R/GR_PK_model_fxns.R
 \name{PK_to_conc_profile}
 \alias{PK_to_conc_profile}
-\title{PK_to_conc_profile
-Calculate the serum concentration profile based on the drug PK, dose, and schedule}
+\title{PK_to_conc_profile}
 \usage{
 PK_to_conc_profile(PK_para, Dose, Schedule, Duration, Dose_uM_0 = 0)
 }
 \arguments{
 \item{PK_para}{numeric array for the PK properties of the drug (required fields: MW, VF, k_a, k_e)
 \itemize{
-\item{'MW' molecular weight in g/mol}
+\item{\code{MW} molecular weight in g/mol}
 \item{'VF' distribution volume in L/kg}
 \item{'k_a' absoption rate in 1/h}
 \item{'k_e' elimination rate in 1/h}
@@ -30,6 +29,9 @@ list with \code{Time} (in days) and \code{Conc} serum concentration (in µM)
 and \code{dose_period} for the dosing schedule
 }
 \description{
+Calculate the serum concentration profile based on the drug PK, dose, and schedule
+}
+\details{
 Calculate the serum concentration profile based on the drug PK, dose, and schedule.
 The concentration (in µM) is calculated based on one-compartment PK model with parameters k_a and k_e
 provided in the input variable PK_para.
