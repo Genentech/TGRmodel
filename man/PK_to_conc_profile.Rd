@@ -11,7 +11,7 @@ PK_to_conc_profile(PK_para, Dose, Schedule, Duration, Dose_uM_0 = 0)
 \itemize{
 \item{\code{MW} molecular weight in g/mol}
 \item{'VF' distribution volume in L/kg}
-\item{'k_a' absoption rate in 1/h}
+\item{'k_a' absorption rate in 1/h}
 \item{'k_e' elimination rate in 1/h}
 }}
 

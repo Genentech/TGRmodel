@@ -11,7 +11,7 @@
 #'    \itemize{
 #'      \item{\code{MW} molecular weight in g/mol}
 #'      \item{'VF' distribution volume in L/kg}
-#'      \item{'k_a' absoption rate in 1/h}
+#'      \item{'k_a' absorption rate in 1/h}
 #'      \item{'k_e' elimination rate in 1/h}
 #'     }
 #' @param Dose  numeric values for the dose of the drug given in mg/kg
@@ -66,6 +66,15 @@ PK_to_conc_profile <- function(PK_para, Dose, Schedule, Duration, Dose_uM_0 = 0)
 
 
 #' expanding GR function for rate based on concentration
+#' Calculate the relative growth rate based on concentration and GR paramters
+#' 
+#' @param c numeric value for the serum concentration in µM
+#' @param GR_para  numeric array for the in vitro GR parameters of the drug (required fields: \code{GR_inf}, \code{GEC50}, \code{h_GR})
+#' 
+#' @return numeric value as relative growth rate \code{k}
+#' 
+#' @export
+#' 
 relk_fct <- function(c,GR_para) {
   GR_c <- logistic_4parameters(pmax(0,c), GR_para$GR_inf, 1, GR_para$GEC50, GR_para$h_GR)
   return ( log2(GR_c + 1) )
@@ -100,8 +109,8 @@ relk_over_time <- function(GR_para, conc_profile) {
 #' Calculate relative tumor growth inhibition (TGR) based on conc_profile
 #'
 #' Calculate the serum concentration profile based on the drug PK, dose, and schedule.
-#' The concentration (in µM) is calculated based on one-compartment PK model with parameters k_a and k_e 
-#' provided in the input variable PK_para. 
+#' The concentration (in µM) is calculated based on one-compartment PK model with parameters \code{k_a} and \code{k_e} 
+#' provided in the input variable \code{PK_para}. 
 #'
 #' @param conc_profile  data.frame with \code{Time} (in days) and relative growth rate \code{k} over time
 #' can be the output of \code{PK_to_conc_profile}

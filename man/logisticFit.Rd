@@ -20,7 +20,7 @@ logisticFit(
 
 \item{x_0}{upper limit; (=1 by default)}
 
-\item{curve_type}{response curve: either IC (\link{0,1}) or GR(\link{-1,1})}
+\item{curve_type}{response curve: either IC (for values in \code{[0,1]}) or GR (for values in \code{[-1,1]})}
 
 \item{force}{force a sigmoidal fit even if the fit is not significantly better than a flat fit}
 
