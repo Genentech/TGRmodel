@@ -8,7 +8,7 @@
 #' @param concs concentration values
 #' @param normValues normalized response values
 #' @param x_0 upper limit; (=1 by default)
-#' @param curve_type response curve: either IC ([0,1]) or GR([-1,1])
+#' @param curve_type response curve: either IC (for values in \code{[0,1]}) or GR (for values in \code{[-1,1]})
 #' @param force force a sigmoidal fit even if the fit is not significantly better than a flat fit
 #' @param cap cap values at (x_0 + cap)
 #' @return vector of parameters

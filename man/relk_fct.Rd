@@ -2,10 +2,20 @@
 % Please edit documentation in R/GR_PK_model_fxns.R
 \name{relk_fct}
 \alias{relk_fct}
-\title{expanding GR function for rate based on concentration}
+\title{expanding GR function for rate based on concentration
+Calculate the relative growth rate based on concentration and GR paramters}
 \usage{
 relk_fct(c, GR_para)
 }
+\arguments{
+\item{c}{numeric value for the serum concentration in µM}
+
+\item{GR_para}{numeric array for the in vitro GR parameters of the drug (required fields: \code{GR_inf}, \code{GEC50}, \code{h_GR})}
+}
+\value{
+numeric value as relative growth rate \code{k}
+}
 \description{
 expanding GR function for rate based on concentration
+Calculate the relative growth rate based on concentration and GR paramters
 }
