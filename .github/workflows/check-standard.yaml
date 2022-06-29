@@ -49,7 +49,7 @@ jobs:
 
       - uses: r-lib/actions/check-r-package@v1
           with:
-            error-on: '"error"'
+            error-on: 'error'
 
       # Uncomments once tests are added
       #- name: Show testthat output
