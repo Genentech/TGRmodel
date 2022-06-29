@@ -10,7 +10,8 @@ relk_fct(c, GR_para)
 \arguments{
 \item{c}{numeric value for the serum concentration in µM}
 
-\item{GR_para}{numeric array for the in vitro GR parameters of the drug (required fields: \code{GR_inf}, \code{GEC50}, \code{h_GR})}
+\item{GR_para}{numeric array for the in vitro GR parameters of the drug
+(required fields: \code{GR_inf}, \code{GEC50}, \code{h_GR})}
 }
 \value{
 numeric value as relative growth rate \code{k}

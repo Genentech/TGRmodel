@@ -1,12 +1,14 @@
 Package: TGRmodel
 Title: Functions to predict Tumor Growth Rate inhibition using in vitro data
-Version: 0.0.1.0
-Authors@R: c(
+Version: 0.0.1.1
+Author: c(
     person("Rocky", "Diegmiller", , "therock5493@gmail.com", role = c("aut")),
     person("Marc", "Hafner", , "hafner.marc@gene.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0003-1337-7598")))
-Description: Functions to predict Tumor Growth Rate inhibition using in vitro data. 
+Maintainer: 
+    Marc Hafner <hafner.marc@gene.com>
+Description: Functions to predict Tumor Growth Rate inhibition using in vitro data.
     Model described in the manuscript "Growth-rate model predicts in vivo tumor response from in vitro data" (2022, CPT: Pharmacometrics & Systems Pharmacology).
-    Please cite "Diegmiller et al., in revision at CPT Pharmacometrics Syst Pharmacol, 2022"
+    Please cite "Diegmiller et al., in revision at CPT Pharmacometrics Syst Pharmacol, 2022".
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -15,6 +17,9 @@ Imports:
     drc,
     gsignal
 Suggests: 
+    ggplot2,
+    ggrepel,
+    gridExtra,
     knitr,
     rmarkdown,
     spelling

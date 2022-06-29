@@ -41,7 +41,7 @@ logisticFit <-
       lower <- c(.1, 0, min(concs) / 10)
     } else if (curve_type == "GR") {
       priors <- c(2, 0.1, median(concs))
-      lower <- c(.1,-1, min(concs) / 10)
+      lower <- c(.1, -1, min(concs) / 10)
     }
     upper <- c(5, min(x_0 + .1, 1), max(concs) * 10)
 
@@ -53,7 +53,7 @@ logisticFit <-
 
     ######################################
     # IC curve fitting
-    output_model_new = try(drc::drm(
+    output_model_new <- try(drc::drm(
       normValues ~ log10conc,
       data = df_,
       logDose = 10,
@@ -68,7 +68,7 @@ logisticFit <-
     # assuming proper fit result
     if (class(output_model_new) != "try-error") {
       for (p in fit_para) {
-        out[p] = stats::coef(output_model_new)[paste0(p, ":(Intercept)")]
+        out[p] <- stats::coef(output_model_new)[paste0(p, ":(Intercept)")]
       }
       # F-test for the significance of the sigmoidal fit
       Npara <- 3 # N of parameters in the growth curve
@@ -116,13 +116,13 @@ logisticFit <-
     if (out["flat_fit"] == 1) {
       out["c50"] <- 0
       out["h"] <- 0.0001
-      out["xc50"] <- ifelse(mean(xAvg$normValues) > .5, Inf,-Inf)
+      out["xc50"] <- ifelse(mean(xAvg$normValues) > .5, Inf, -Inf)
       out["x_inf"] <- mean(xAvg$normValues)
     }
 
     # Add xc50 = +/-Inf for any curves that don"t reach RelativeViability = 0.5
     if (is.na(out["xc50"])) {
-      out["xc50"] <- ifelse(out["x_inf"] > .5, Inf,-Inf)
+      out["xc50"] <- ifelse(out["x_inf"] > .5, Inf, -Inf)
     }
     return(out)
   }
