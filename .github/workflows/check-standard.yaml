@@ -47,9 +47,9 @@ jobs:
             rcmdcheck
             spelling
 
-      - uses: r-lib/actions/check-r-package@v1
+      - uses: r-lib/actions/check-r-package@v2
           with:
-            error-on: 'error'
+            error-on: '"error"'
 
       # Uncomments once tests are added
       #- name: Show testthat output
