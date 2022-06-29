@@ -48,8 +48,8 @@ jobs:
             spelling
 
       - uses: r-lib/actions/check-r-package@v2
-          with:
-            error-on: '"error"'
+        with:
+          error-on: '"error"'
 
       # Uncomments once tests are added
       #- name: Show testthat output
