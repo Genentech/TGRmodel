@@ -6,15 +6,8 @@
 \alias{TGRmodel-package}
 \title{TGRmodel: Functions to predict Tumor Growth Rate inhibition using in vitro data}
 \description{
-Functions to predict Tumor Growth Rate inhibition using in vitro data. Model described in the manuscript "Growth-rate model predicts in vivo tumor response from in vitro data" (2022, CPT: Pharmacometrics & Systems Pharmacology). Please cite "Diegmiller et al., in revision at CPT Pharmacometrics Syst Pharmacol, 2022"
-}
-\author{
-\strong{Maintainer}: Marc Hafner \email{hafner.marc@gene.com} (\href{https://orcid.org/0000-0003-1337-7598}{ORCID})
-
-Authors:
-\itemize{
-  \item Rocky Diegmiller \email{therock5493@gmail.com}
-}
-
+Functions to predict Tumor Growth Rate inhibition using in vitro data.
+    Model described in the manuscript "Growth-rate model predicts in vivo tumor response from in vitro data" (2022, CPT: Pharmacometrics & Systems Pharmacology).
+    Please cite "Diegmiller et al., in revision at CPT Pharmacometrics Syst Pharmacol, 2022".
 }
 \keyword{internal}
