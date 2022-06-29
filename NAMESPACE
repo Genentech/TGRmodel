@@ -2,6 +2,7 @@
 
 export(GR_inVitro_integration)
 export(PK_to_conc_profile)
+export(get_header)
 export(logisticFit)
 export(logistic_4parameters)
 export(relk_fct)
