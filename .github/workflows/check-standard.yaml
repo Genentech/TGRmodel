@@ -44,6 +44,7 @@ jobs:
             drc
             gsignal
             spelling
+            ggrepel
 
       - uses: r-lib/actions/check-r-package@v1
 
