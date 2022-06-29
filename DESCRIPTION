@@ -17,8 +17,10 @@ Imports:
     drc,
     gsignal
 Suggests: 
+    ggplot2,
     ggrepel,
     gridExtra,
+    gtools,
     knitr,
     rmarkdown,
     spelling
