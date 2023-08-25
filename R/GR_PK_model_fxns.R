@@ -159,9 +159,8 @@ GR_inVitro_integration <-
     if (int_method == "mean") {
       k_inhibition <- relk_over_time(GR_para, conc_profile)
       k_mean <-
-        mean(k_inhibition$relk[k_inhibition$Time >= (Duration - 2) * dose_period &
-                                 k_inhibition$Time < (Duration -
-                                                        1) * dose_period])
+        mean(k_inhibition$relk[k_inhibition$Time >= Duration - (2 * dose_period) &
+                                 k_inhibition$Time < Duration - dose_period])
     } else if (int_method == "cont_int") {
       integrand <- function(x)
         relk_fct(conc_profile$Conc(x), GR_para)
@@ -169,8 +168,8 @@ GR_inVitro_integration <-
       
       int_val <- stats::integrate(
         integrand,
-        lower = (Duration - 2) * dose_period,
-        upper = (Duration - 1) * dose_period,
+        lower = Duration - (2 * dose_period),
+        upper = Duration - dose_period,
         subdivisions = 20 * dose_period / .integration_step()
       )
       k_mean <- int_val$value / dose_period
